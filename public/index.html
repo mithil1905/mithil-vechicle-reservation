@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mithil Vehicle Reservation System | Indian Automotive Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome for sleek icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>MITHIL VEHICLE</h1>
+                    <span>Reservation & Service Hub</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a></li>
+                <li><a href="vehicles.html" class="nav-link"><i class="fa-solid fa-car-side"></i> Vehicles</a></li>
+                <li><a href="services.html" class="nav-link"><i class="fa-solid fa-wrench"></i> Services</a></li>
+                <li><a href="payments.html" class="nav-link"><i class="fa-solid fa-indian-rupee-sign"></i> Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Hero Section with Indian Automotive Theme & Image -->
+        <section class="page-hero">
+            <div class="hero-content">
+                <div class="hero-tag">
+                    <i class="fa-solid fa-dharmachakra"></i> Bharat Automotive Care
+                </div>
+                <h1 class="hero-title">नमस्ते! Welcome to <span>Mithil Vehicle Reservation</span></h1>
+                <p class="hero-desc">
+                    Comprehensive full-stack Vehicle Service & Reservation Management tailored for Indian roads. From Tata Nexon EVs & Mahindra Thar 4x4s to Royal Enfield Classics, manage periodic maintenance, monsoon checks, and UPI payments seamlessly.
+                </p>
+                <div class="hero-stats-row">
+                    <div class="hero-mini-stat">
+                        <span class="val" id="heroActiveJobs">-</span>
+                        <span class="lbl">Active Job Cards</span>
+                    </div>
+                    <div class="hero-mini-stat">
+                        <span class="val" id="heroTotalFleet">-</span>
+                        <span class="lbl">Registered Fleet</span>
+                    </div>
+                    <div class="hero-mini-stat">
+                        <span class="val" id="heroRevenue">₹ -</span>
+                        <span class="lbl">Total Revenue</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image-box">
+                <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80" 
+                     alt="Indian High-Tech Vehicle Service Workshop" 
+                     class="hero-img"
+                     onerror="this.src='https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=1200&q=80'">
+                <div class="hero-overlay-gradient"></div>
+            </div>
+        </section>
+
+        <!-- Stats Overview Cards -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon saffron">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Customers</h3>
+                    <div class="stat-value" id="statCustomers">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-car"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Registered Vehicles</h3>
+                    <div class="stat-value" id="statVehicles">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon gold">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Active Services</h3>
+                    <div class="stat-value" id="statPendingServices">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon emerald">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Paid Revenue</h3>
+                    <div class="stat-value" id="statRevenue">₹ 0.00</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Reservations Section -->
+        <section class="table-card">
+            <div class="section-header" style="padding: 1.5rem 1.5rem 0.5rem 1.5rem;">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-calendar-check"></i> Recent Service Reservations
+                </h2>
+                <div class="action-bar">
+                    <a href="services.html" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-plus"></i> Book Service
+                    </a>
+                    <a href="services.html" class="btn btn-secondary btn-sm">
+                        View All <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Vehicle Number</th>
+                            <th>Model</th>
+                            <th>Customer Name</th>
+                            <th>Service Package</th>
+                            <th>Date</th>
+                            <th>Est. Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentServicesTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Loading live reservations from MySQL...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>© 2026 <strong>Mithil Vehicle Reservation System</strong> | Port 3000 | MySQL Powered</p>
+            <p>Crafted for Indian Automotive Workshops <span class="footer-tricolor"></span></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
+

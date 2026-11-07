@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management | Mithil Vehicle Reservation System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>MITHIL VEHICLE</h1>
+                    <span>Reservation & Service Hub</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="customers.html" class="nav-link active"><i class="fa-solid fa-users"></i> Customers</a></li>
+                <li><a href="vehicles.html" class="nav-link"><i class="fa-solid fa-car-side"></i> Vehicles</a></li>
+                <li><a href="services.html" class="nav-link"><i class="fa-solid fa-wrench"></i> Services</a></li>
+                <li><a href="payments.html" class="nav-link"><i class="fa-solid fa-indian-rupee-sign"></i> Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Page Hero Section with Image -->
+        <section class="page-hero">
+            <div class="hero-content">
+                <div class="hero-tag">
+                    <i class="fa-solid fa-id-card-clip"></i> Table 1 / 4 : Customers
+                </div>
+                <h1 class="hero-title">Customer <span>Relationship Hub</span></h1>
+                <p class="hero-desc">
+                    Manage Indian vehicle owners with complete contact profiles, regional cities across Bharat (Bengaluru, Chennai, Ahmedabad, Delhi, Mumbai), and servicing history.
+                </p>
+                <div>
+                    <button class="btn btn-primary" onclick="openAddCustomerModal()">
+                        <i class="fa-solid fa-user-plus"></i> Register New Customer
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image-box">
+                <!-- High Resolution Customer Service Lounge Image -->
+                <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=1200&q=80" 
+                     alt="Customer Relationship Desk at Indian Automotive Center" 
+                     class="hero-img"
+                     onerror="this.src='https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80'">
+                <div class="hero-overlay-gradient"></div>
+            </div>
+        </section>
+
+        <!-- Section Header with Search Bar -->
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fa-solid fa-address-book"></i> Registered Customer Directory
+            </h2>
+            <div class="action-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="customerSearchInput" placeholder="Search by name, phone, city..." oninput="handleCustomerSearch()">
+                </div>
+                <button class="btn btn-primary" onclick="openAddCustomerModal()">
+                    <i class="fa-solid fa-plus"></i> Add Customer
+                </button>
+            </div>
+        </div>
+
+        <!-- Customers Table Card -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer Name</th>
+                            <th>Mobile (+91)</th>
+                            <th>Email Address</th>
+                            <th>City / State</th>
+                            <th>Address</th>
+                            <th>Joined Date</th>
+                            <th style="text-align: right;">CRUD Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Fetching customer records from MySQL...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- CREATE / ADD CUSTOMER MODAL -->
+    <div class="modal-overlay" id="addCustomerModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fa-solid fa-user-plus"></i> Add New Customer</h3>
+                <button class="modal-close" onclick="closeModal('addCustomerModal')">&times;</button>
+            </div>
+            <form id="addCustomerForm" onsubmit="saveCustomer(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Full Name <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="custName" placeholder="e.g. Ramesh Kumar / Anjali Rao" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number (+91) <span class="req">*</span></label>
+                            <input type="tel" class="form-control" id="custPhone" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" class="form-control" id="custEmail" placeholder="customer@gmail.com">
+                        </div>
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" class="form-control" id="custCity" placeholder="e.g. Bengaluru" value="Bengaluru">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" class="form-control" id="custState" placeholder="e.g. Karnataka" value="Karnataka">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Residential / Office Address</label>
+                            <textarea class="form-control" id="custAddress" placeholder="Apartment / Street / Area details"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addCustomerModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- UPDATE / EDIT CUSTOMER MODAL -->
+    <div class="modal-overlay" id="editCustomerModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fa-solid fa-user-pen"></i> Update Customer Information</h3>
+                <button class="modal-close" onclick="closeModal('editCustomerModal')">&times;</button>
+            </div>
+            <form id="editCustomerForm" onsubmit="updateCustomer(event)">
+                <input type="hidden" id="editCustId">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Full Name <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="editCustName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number (+91) <span class="req">*</span></label>
+                            <input type="tel" class="form-control" id="editCustPhone" required pattern="[0-9]{10}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" class="form-control" id="editCustEmail">
+                        </div>
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" class="form-control" id="editCustCity">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" class="form-control" id="editCustState">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Address</label>
+                            <textarea class="form-control" id="editCustAddress"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editCustomerModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-container" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="deleteModalTitle"><i class="fa-solid fa-triangle-exclamation" style="color: var(--crimson);"></i> Delete Customer</h3>
+                <button class="modal-close" onclick="closeModal('deleteConfirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteModalMessage" style="color: var(--text-secondary); font-size: 0.95rem;"></p>
+                <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--crimson); padding: 10px 14px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: #fca5a5;">
+                    <i class="fa-solid fa-circle-info"></i> Note: Deleting this customer will also cascade delete all associated vehicles, service reservations, and payments.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><i class="fa-solid fa-trash"></i> Delete Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>© 2026 <strong>Mithil Vehicle Reservation System</strong> | Port 3000</p>
+            <p>Customer Management Module <span class="footer-tricolor"></span></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/customers.js"></script>
+</body>
+</html>
+

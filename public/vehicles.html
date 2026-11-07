@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Fleet Registry | Mithil Vehicle Reservation System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>MITHIL VEHICLE</h1>
+                    <span>Reservation & Service Hub</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a></li>
+                <li><a href="vehicles.html" class="nav-link active"><i class="fa-solid fa-car-side"></i> Vehicles</a></li>
+                <li><a href="services.html" class="nav-link"><i class="fa-solid fa-wrench"></i> Services</a></li>
+                <li><a href="payments.html" class="nav-link"><i class="fa-solid fa-indian-rupee-sign"></i> Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Page Hero Section with Image -->
+        <section class="page-hero">
+            <div class="hero-content">
+                <div class="hero-tag">
+                    <i class="fa-solid fa-car"></i> Table 2 / 4 : Vehicles
+                </div>
+                <h1 class="hero-title">Indian Vehicle <span>Fleet Registry</span></h1>
+                <p class="hero-desc">
+                    Register and monitor Indian vehicles with Bharat registration plates (KA, MH, DL, TN, GJ). Full diagnostics support for Tata Motors, Mahindra 4x4s, Maruti Suzuki CNG, Royal Enfield bullets, and modern EVs.
+                </p>
+                <div>
+                    <button class="btn btn-primary" onclick="openAddVehicleModal()">
+                        <i class="fa-solid fa-car-rear"></i> Register Vehicle
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image-box">
+                <!-- High Resolution Indian Garage Vehicle Fleet Image -->
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" 
+                     alt="Automotive Garage Fleet Inspection" 
+                     class="hero-img"
+                     onerror="this.src='https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80'">
+                <div class="hero-overlay-gradient"></div>
+            </div>
+        </section>
+
+        <!-- Section Header with Search Bar -->
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fa-solid fa-car-tunnel"></i> Registered Vehicles Database
+            </h2>
+            <div class="action-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="vehicleSearchInput" placeholder="Search number plate, brand, model..." oninput="handleVehicleSearch()">
+                </div>
+                <button class="btn btn-primary" onclick="openAddVehicleModal()">
+                    <i class="fa-solid fa-plus"></i> Add Vehicle
+                </button>
+            </div>
+        </div>
+
+        <!-- Vehicles Table Card -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Registration Plate</th>
+                            <th>Brand & Model</th>
+                            <th>Vehicle Type</th>
+                            <th>Fuel Type</th>
+                            <th>Year</th>
+                            <th>Owner (Customer)</th>
+                            <th style="text-align: right;">CRUD Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehiclesTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Loading vehicles from MySQL...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- CREATE / ADD VEHICLE MODAL -->
+    <div class="modal-overlay" id="addVehicleModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fa-solid fa-car"></i> Register New Vehicle</h3>
+                <button class="modal-close" onclick="closeModal('addVehicleModal')">&times;</button>
+            </div>
+            <form id="addVehicleForm" onsubmit="saveVehicle(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Vehicle Owner (Customer) <span class="req">*</span></label>
+                            <select class="form-control" id="vehCustomerId" required>
+                                <option value="">Select registered customer...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Indian Reg. Number Plate <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="vehRegNo" placeholder="e.g. KA-01-MJ-2024" required style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Category <span class="req">*</span></label>
+                            <select class="form-control" id="vehType" required>
+                                <option value="Four Wheeler (Car/SUV)">Four Wheeler (Car/SUV)</option>
+                                <option value="Two Wheeler (Bike/Scooter)">Two Wheeler (Bike/Scooter)</option>
+                                <option value="Electric Vehicle (EV)">Electric Vehicle (EV)</option>
+                                <option value="Auto Rickshaw / Commercial">Auto Rickshaw / Commercial</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand / Make <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="vehBrand" placeholder="e.g. Tata / Mahindra / Royal Enfield" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Model & Variant <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="vehModel" placeholder="e.g. Nexon EV / Thar / Classic 350" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Type <span class="req">*</span></label>
+                            <select class="form-control" id="vehFuel" required>
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="CNG">CNG</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Manufacturing Year</label>
+                            <input type="number" class="form-control" id="vehYear" min="1990" max="2027" value="2023">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addVehicleModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Register Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- UPDATE / EDIT VEHICLE MODAL -->
+    <div class="modal-overlay" id="editVehicleModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fa-solid fa-pen-to-square"></i> Update Vehicle Information</h3>
+                <button class="modal-close" onclick="closeModal('editVehicleModal')">&times;</button>
+            </div>
+            <form id="editVehicleForm" onsubmit="updateVehicle(event)">
+                <input type="hidden" id="editVehId">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Vehicle Owner (Customer) <span class="req">*</span></label>
+                            <select class="form-control" id="editVehCustomerId" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reg. Number Plate <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="editVehRegNo" required style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label>Category <span class="req">*</span></label>
+                            <select class="form-control" id="editVehType" required>
+                                <option value="Four Wheeler (Car/SUV)">Four Wheeler (Car/SUV)</option>
+                                <option value="Two Wheeler (Bike/Scooter)">Two Wheeler (Bike/Scooter)</option>
+                                <option value="Electric Vehicle (EV)">Electric Vehicle (EV)</option>
+                                <option value="Auto Rickshaw / Commercial">Auto Rickshaw / Commercial</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="editVehBrand" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Model <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="editVehModel" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Type <span class="req">*</span></label>
+                            <select class="form-control" id="editVehFuel" required>
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="CNG">CNG</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Manufacturing Year</label>
+                            <input type="number" class="form-control" id="editVehYear" min="1990" max="2027">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editVehicleModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-container" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="deleteModalTitle"><i class="fa-solid fa-triangle-exclamation" style="color: var(--crimson);"></i> Delete Vehicle</h3>
+                <button class="modal-close" onclick="closeModal('deleteConfirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteModalMessage" style="color: var(--text-secondary); font-size: 0.95rem;"></p>
+                <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--crimson); padding: 10px 14px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: #fca5a5;">
+                    <i class="fa-solid fa-circle-info"></i> Note: Deleting this vehicle will automatically remove all linked service reservations and payment records.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><i class="fa-solid fa-trash"></i> Delete Vehicle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>© 2026 <strong>Mithil Vehicle Reservation System</strong> | Port 3000</p>
+            <p>Vehicle Fleet Registry <span class="footer-tricolor"></span></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/vehicles.js"></script>
+</body>
+</html>
+

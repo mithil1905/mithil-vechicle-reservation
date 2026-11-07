@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Reservations & Maintenance | Mithil Vehicle Reservation System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>MITHIL VEHICLE</h1>
+                    <span>Reservation & Service Hub</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a></li>
+                <li><a href="vehicles.html" class="nav-link"><i class="fa-solid fa-car-side"></i> Vehicles</a></li>
+                <li><a href="services.html" class="nav-link active"><i class="fa-solid fa-wrench"></i> Services</a></li>
+                <li><a href="payments.html" class="nav-link"><i class="fa-solid fa-indian-rupee-sign"></i> Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Page Hero Section with Image -->
+        <section class="page-hero">
+            <div class="hero-content">
+                <div class="hero-tag">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Table 3 / 4 : Services
+                </div>
+                <h1 class="hero-title">Service <span>Reservations & Job Cards</span></h1>
+                <p class="hero-desc">
+                    Schedule and monitor vehicle service reservations. Featuring Indian season-ready packages like Monsoon Waterproofing & Underbody Seal, Ayudha Pooja Festive Servicing, and EV Battery Health Diagnostics.
+                </p>
+                <div>
+                    <button class="btn btn-primary" onclick="openAddServiceModal()">
+                        <i class="fa-solid fa-calendar-plus"></i> Book Service Reservation
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image-box">
+                <!-- High Resolution Service Workshop Mechanic Image -->
+                <img src="https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=1200&q=80" 
+                     alt="Expert Technician Servicing Vehicle Engine in Indian Workshop" 
+                     class="hero-img"
+                     onerror="this.src='https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80'">
+                <div class="hero-overlay-gradient"></div>
+            </div>
+        </section>
+
+        <!-- Section Header with Search & Status Filters -->
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fa-solid fa-clipboard-list"></i> Active Service Job Cards
+            </h2>
+            <div class="action-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="serviceSearchInput" placeholder="Search vehicle plate, service type..." oninput="handleServiceSearch()">
+                </div>
+                <select id="statusFilter" class="form-control" style="width: auto; padding: 8px 14px;" onchange="handleStatusFilter()">
+                    <option value="">All Statuses</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Ready for Delivery">Ready for Delivery</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button class="btn btn-primary" onclick="openAddServiceModal()">
+                    <i class="fa-solid fa-plus"></i> Book Service
+                </button>
+            </div>
+        </div>
+
+        <!-- Services Table Card -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Vehicle Number</th>
+                            <th>Customer</th>
+                            <th>Service Package</th>
+                            <th>Scheduled Date</th>
+                            <th>Est. Cost</th>
+                            <th>Status</th>
+                            <th>Technician Notes</th>
+                            <th style="text-align: right;">CRUD Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTableBody">
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Fetching service reservations from MySQL...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- CREATE / BOOK SERVICE MODAL -->
+    <div class="modal-overlay" id="addServiceModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fa-solid fa-calendar-plus"></i> Book Service Reservation</h3>
+                <button class="modal-close" onclick="closeModal('addServiceModal')">&times;</button>
+            </div>
+            <form id="addServiceForm" onsubmit="saveService(event)">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Select Vehicle <span class="req">*</span></label>
+                            <select class="form-control" id="servVehicleId" required>
+                                <option value="">Select registered vehicle...</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Service Package / Type <span class="req">*</span></label>
+                            <select class="form-control" id="servTypePreset" onchange="applyServicePreset()">
+                                <option value="">-- Choose Indian Service Package or Custom --</option>
+                                <option value="General Periodic Service (Engine Oil & Filter)" data-cost="2800">General Periodic Service (₹2,800)</option>
+                                <option value="Monsoon High-Voltage & Battery Health Diagnostics" data-cost="3499">Monsoon Battery & Underbody Care (₹3,499)</option>
+                                <option value="Ayudha Pooja & Festive Deep Engine Servicing" data-cost="2250">Ayudha Pooja / Festive Deep Clean (₹2,250)</option>
+                                <option value="National Highway Trip Readiness & Brake Overhaul" data-cost="3200">National Highway Readiness Check (₹3,200)</option>
+                                <option value="CNG Kit Calibration & Periodic Maintenance" data-cost="4150">CNG Kit Safety & Calibration (₹4,150)</option>
+                                <option value="Off-Road 4x4 Differential & Suspension Overhaul" data-cost="7800">Mahindra / 4x4 Suspension Overhaul (₹7,800)</option>
+                                <option value="custom">-- Custom Service Package --</option>
+                            </select>
+                            <input type="text" class="form-control" id="servType" placeholder="Service package name" required style="margin-top: 8px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Service Date <span class="req">*</span></label>
+                            <input type="date" class="form-control" id="servDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Initial Status <span class="req">*</span></label>
+                            <select class="form-control" id="servStatus" required>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Ready for Delivery">Ready for Delivery</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Estimated Cost (INR ₹) <span class="req">*</span></label>
+                            <input type="number" step="0.01" class="form-control" id="servCost" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Customer Concern / Service Description</label>
+                            <textarea class="form-control" id="servDesc" placeholder="e.g. Brake noise, AC cooling issue, oil change required"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Mechanic & Technical Bay Notes</label>
+                            <textarea class="form-control" id="servNotes" placeholder="Technician observations, parts changed"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addServiceModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Reservation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- UPDATE / EDIT SERVICE MODAL -->
+    <div class="modal-overlay" id="editServiceModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fa-solid fa-pen-to-square"></i> Update Service Job Card</h3>
+                <button class="modal-close" onclick="closeModal('editServiceModal')">&times;</button>
+            </div>
+            <form id="editServiceForm" onsubmit="updateService(event)">
+                <input type="hidden" id="editServId">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Vehicle <span class="req">*</span></label>
+                            <select class="form-control" id="editServVehicleId" required></select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Service Package <span class="req">*</span></label>
+                            <input type="text" class="form-control" id="editServType" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Scheduled Date <span class="req">*</span></label>
+                            <input type="date" class="form-control" id="editServDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Service Status <span class="req">*</span></label>
+                            <select class="form-control" id="editServStatus" required>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Ready for Delivery">Ready for Delivery</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Estimated Cost (INR ₹) <span class="req">*</span></label>
+                            <input type="number" step="0.01" class="form-control" id="editServCost" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Service Description</label>
+                            <textarea class="form-control" id="editServDesc"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Mechanic Notes</label>
+                            <textarea class="form-control" id="editServNotes"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editServiceModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Update Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-container" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="deleteModalTitle"><i class="fa-solid fa-triangle-exclamation" style="color: var(--crimson);"></i> Delete Service</h3>
+                <button class="modal-close" onclick="closeModal('deleteConfirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteModalMessage" style="color: var(--text-secondary); font-size: 0.95rem;"></p>
+                <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--crimson); padding: 10px 14px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: #fca5a5;">
+                    <i class="fa-solid fa-circle-info"></i> Note: Deleting this service will also cancel any linked payment transactions.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><i class="fa-solid fa-trash"></i> Delete Service</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>© 2026 <strong>Mithil Vehicle Reservation System</strong> | Port 3000</p>
+            <p>Service Reservation & Maintenance <span class="footer-tricolor"></span></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/services.js"></script>
+</body>
+</html>
+
